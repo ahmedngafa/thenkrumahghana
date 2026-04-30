@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate App Icons</title>
+    <style>
+        body { font-family: Arial; padding: 20px; text-align: center; }
+        canvas { border: 1px solid #ccc; margin: 10px; }
+    </style>
+</head>
+<body>
+    <h1>App Icon Generator</h1>
+    <p>Click each button to download the icon. Save them in the "icons" folder.</p>
+    <div id="output"></div>
+    
+    <script>
+        function generateIcon(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            // Background
+            ctx.fillStyle = '#0A5C36';
+            ctx.beginPath();
+            ctx.roundRect(0, 0, size, size, size * 0.2);
+            ctx.fill();
+            
+            // Star
+            const starSize = size * 0.6;
+            const cx = size / 2;
+            const cy = size / 2;
+            const spikes = 5;
+            const outerRadius = starSize / 2;
+            const innerRadius = outerRadius * 0.4;
+            
+            ctx.fillStyle = '#C8963E';
+            ctx.shadowColor = 'rgba(0,0,0,0.3)';
+            ctx.shadowBlur = size * 0.05;
+            ctx.beginPath();
+            
+            let rot = Math.PI / 2 * 3;
+            const step = Math.PI / spikes;
+            
+            ctx.moveTo(cx, cy - outerRadius);
+            for (let i = 0; i < spikes; i++) {
+                ctx.lineTo(cx + Math.cos(rot) * outerRadius, cy + Math.sin(rot) * outerRadius);
+                rot += step;
+                ctx.lineTo(cx + Math.cos(rot) * innerRadius, cy + Math.sin(rot) * innerRadius);
+                rot += step;
+            }
+            ctx.closePath();
+            ctx.fill();
+            
+            return canvas.toDataURL('image/png');
+        }
+        
+        const sizes = [16, 32, 72, 96, 128, 144, 152, 180, 192, 384, 512];
+        const output = document.getElementById('output');
+        
+        sizes.forEach(size => {
+            const btn = document.createElement('button');
+            btn.textContent = `Download ${size}x${size}`;
+            btn.style.cssText = 'display: block; margin: 10px auto; padding: 10px;';
+            btn.onclick = () => {
+                const link = document.createElement('a');
+                link.download = `icon-${size}.png`;
+                link.href = generateIcon(size);
+                link.click();
+            };
+            output.appendChild(btn);
+        });
+    </script>
+</body>
+</html>
